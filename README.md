@@ -1,8 +1,7 @@
-Jassi - Javascript JSON Schema validator
-=====
+# Jassi - Javascript JSON Schema validator
 
 Jassi is a [JSON Schema](http://json-schema.org/) validator written Javascript. It implements the v4 draft.
-The library is packaged as both CommonJS (the Node.js variety) and AMD modules and 
+The library is packaged as both CommonJS (the Node.js variety) and AMD modules and
 should be compatible with most Javascript environments.
 
 ## Implemented validation keywords

@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+
+// Load grunt.
+var grunt = require('grunt');
+
+// Run grunt.
+grunt.cli();

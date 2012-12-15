@@ -1,0 +1,37 @@
+{
+  "name": "jassi",
+  "title": "Jassi",
+  "description": "Jassi is a JSON data validator.",
+  "version": "0.1.0",
+  "author": "Sorin Iclanzan <sorin@iclanzan.com>",
+  "keywords": [
+    "Jassi",
+    "JSON",
+    "validator",
+    "schema",
+    "nodejs",
+    "js",
+    "javascript"
+  ],
+  "homepage": "https://github.com/iclanzan/jassi",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/iclanzan/jassi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/iclanzan/jassi/issues"
+  },
+  "license": "https://github.com/iclanzan/jassi",
+  "scripts": {
+    "build": "./jassi"
+  },
+  "devDependencies": {
+    "grunt": ">=0.4.0rc1",
+    "grunt-contrib-copy": "latest",
+    "grunt-contrib-uglify": "git://github.com/gruntjs/grunt-contrib-uglify.git",
+    "grunt-contrib-nodeunit": "latest"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}

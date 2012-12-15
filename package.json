@@ -22,6 +22,7 @@
     "url": "https://github.com/iclanzan/jassi/issues"
   },
   "license": "https://github.com/iclanzan/jassi",
+  "main": "jassi.js",
   "scripts": {
     "build": "./jassi"
   },

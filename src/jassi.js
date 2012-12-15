@@ -1,13 +1,9 @@
-/**
- * JSON Schema primitive types
+/*
+ * <%= pkg.title %> v<%= pkg.version %>
+ * <%= pkg.homepage %>
  *
- * array  A JSON array.
- * boolean  A JSON boolean.
- * integer  A JSON number without a fraction or exponent part
- * number  Any JSON number.  Number includes integer.
- * null  The JSON null value.
- * object  A JSON object.
- * string  A JSON string.
+ * Copyright (c) <%= new Date().getFullYear() %> <%= pkg.author %>
+ * License: <%= pkg.license %>
  */
 
 (function(root, undefined) {
@@ -27,6 +23,7 @@ function getKeys(obj) {
 
 /**
  * Check if a given value is an instance of a JSON object.
+ * This means that arrays and the null object are not considered objects.
  *
  * @param  {any}     value Any value to be checked
  * @return {Boolean}       Returns true if the value is an instance of a JSON object, false otherwise.
@@ -38,22 +35,24 @@ function isObject(value) {
 /**
  * Get the type of a value.
  *
+ * JSON primitive types:
+ * Array, Boolean, Number, null, Object, String
+ *
  * @param  {any}    value Any value
- * @return {string}       One of the JSON primitive types
+ * @return {String}       One of the JSON primitive types.
  */
 function getType(value) {
   return isObject(value) && 'object' ||
          isArray(value) && 'array' ||
          null === value && 'null' ||
-         typeof value == 'number' && value % 1 === 0 && 'integer' ||
          typeof value;
 }
 
 /**
- * Check if two items are equal as per the JSON-Schema spec.
+ * Check if two items are equal as per the JSON Schema spec.
  *
  * @param  {any}     item1 The first item
- * @param  {any}     item2 The secind item
+ * @param  {any}     item2 The second item
  * @return {Boolean}       Returns true if the items are equal.
  */
 function areEqual(item1, item2) {
@@ -94,6 +93,16 @@ function or(item1, item2) {
   return undefined !== item1 ? item1 : item2;
 }
 
+/**
+ * Validate a JSON instance against a schema.
+ *
+ * The function returns an empty array if validation is successful.
+ *
+ * @param  {any}    instance An instance of a JSON data that needs to be validated
+ * @param  {Object} schema   The schema to validate the instance against
+ * @param  {String} path     Optional. The path to the property that is being validated.
+ * @return {Array}           An array of objects describing validation errors.
+ */
 var validate = function(instance, schema, path) {
   var errors = [], type, l, i, j, items, itemsIsArray, additional, additionalIsObject, found, properties, pattern, pp;
 
@@ -107,7 +116,7 @@ var validate = function(instance, schema, path) {
   if (!isObject(schema)) return addError('Invalid schema.');
 
   type = getType(instance);
-  if (schema.type && schema.type != type)
+  if (schema.type && schema.type != type && (schema.type != 'integer' || type == 'number' && instance % 1 != 0 ))
     addError('Invalid type. Was expecting ' + schema.type + ' but found ' + type + '.');
 
   if (null === instance) return errors;
@@ -209,11 +218,11 @@ var validate = function(instance, schema, path) {
       addError('The instance must be at least ' + schema.minLength + ' character(s) long.');
 
     if (schema.pattern && !instance.match(schema.pattern))
-      addError('Regex pattern /' + schema.pattern + '/ is a missmatch.');
+      addError('Regex pattern /' + schema.pattern + '/ is a mismatch.');
   }
 
-  if ('number' == type || 'integer' == type) {
-    if (schema.multipleOf !== undefined && 'integer' != getType(instance / schema.multipleOf))
+  if ('number' == type) {
+    if (schema.multipleOf !== undefined && instance / schema.multipleOf % 1 != 0)
       addError('The instance is required to be a multiple of ' + schema.multipleOf + '.');
 
     if (schema.maximum !== undefined) {
@@ -278,17 +287,17 @@ var validate = function(instance, schema, path) {
   return errors;
 };
 
-// Expose Jessi as a CommonJS module for Node
+// Expose Jassi as a CommonJS module for Node
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = validate;
 }
 
-// Expose Jessi as an AMD module
+// Expose Jassi as an AMD module
 else if (typeof define === 'function' && define.amd) {
   define(function () { return validate; });
 }
 
 // Attach to the root object, usually window.
-else root.jessi = validate;
+else root.jassi = validate;
 
 })(this);

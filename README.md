@@ -1,8 +1,56 @@
-# Jassi - Javascript JSON Schema validator
-
-Jassi is a [JSON Schema](http://json-schema.org/) validator written Javascript. It implements the v4 draft.
+# Jassi - JavaScript JSON Schema validator
+Jassi is a [JSON Schema](http://json-schema.org/) validator written JavaScript. It implements the v4 draft.
 The library is packaged as both CommonJS (the Node.js variety) and AMD modules and
-should be compatible with most Javascript environments.
+should be compatible with most JavaScript environments.
+
+
+## Getting started
+
+### Installation
+Include either `jassi.js` or `jassi.min.js` into your project. If you're using Node.js you can also install Jassi using `npm install jassi`.
+
+### Usage examples
+The library exposes a single function that receives two arguments, the JSON instance to validate and the schema object to validate against. The function returns an array of objects representing validation errors. If the instance validates successfully the array will be empty.
+
+#### Node.js
+```js
+var validate = require('jassi'),
+		errors;
+
+errors = validate('apple', {type: 'string', maxLength: 5});
+
+if (0 === errors.length) {
+	// validation passed, do something here
+}
+else {
+	// validation failed, print the errors
+	errors.forEach(function(error) {
+		console.log(error.property + ': ' + error.message);
+	});
+}
+```
+
+#### Browser with Require.js
+```js
+require(['path/to/jassi'], function(validate) {
+	var errors;
+
+	errors = validate('apple', {type: 'string', maxLength: 5});
+
+	if (0 === errors.length) {
+		// validation passed, do something here
+	}
+	else {
+		// validation failed, print the errors
+		errors.forEach(function(error) {
+			console.log(error.property + ': ' + error.message);
+		});
+	}
+});
+```
+
+#### Browser without Require.js
+Jassi can be used in the browser the good old fashion way, by including it in a script tag like so: `<script src="path/to/jassi.js"></script>`. In this case Jassi will get attached to the global `window` object and can be used like this: `jassi('apple', {type: 'string', maxLength: 5});`.
 
 ## Implemented validation keywords
 

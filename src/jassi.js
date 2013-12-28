@@ -106,8 +106,12 @@ var validate = function(instance, schema, path) {
   if (!isObject(schema)) return addError('Invalid schema.');
 
   type = getType(instance);
-  if (schema.type && schema.type != type && (schema.type != 'integer' || type != 'number' || instance % 1 != 0 ))
-    addError('Invalid type. Was expecting ' + schema.type + ' but found ' + type + '.');
+  if (schema.type) {
+    items = isArray(schema.type) ? schema.type : [schema.type];
+    if (!~items.indexOf(type) && (type != 'number' || !~items.indexOf('integer') || instance % 1 != 0)) {
+      addError('Invalid type. Was expecting ' + schema.type + ' but found ' + type + '.');
+    }
+  }
 
   if ('array' == type) {
     l = instance.length;

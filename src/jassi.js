@@ -173,7 +173,7 @@ var validate = function(instance, schema, path) {
     }
 
     keys(instance).forEach(function(key) {
-      var schemas, match, dependency;
+      var schemas, dependency;
 
       if (schema.dependencies && (dependency = schema.dependencies[key])) {
         if (isArray(dependency)) {
@@ -200,8 +200,13 @@ var validate = function(instance, schema, path) {
         schemas = [];
         if (properties && properties.hasOwnProperty(key))
           schemas.push(properties[key]);
-        if (pp && pp.some(function(regex) { return key.match(regex) && (match = pp[regex]); }))
-          schemas.push(match);
+        
+        pp && pp.forEach(function(regex) {
+          if (key.match(regex) && pattern[regex]) {
+            schemas.push(pattern[regex]);
+          }
+        });
+
         if (!schemas.length && additional)
           schemas.push(additional);
 

@@ -9,13 +9,8 @@
 (function(root, undefined) {
   'use strict';
 
-function isArray(value) {
-  return Array.isArray(value);
-}
-
-function getKeys(obj) {
-  return Object.keys(obj);
-}
+var isArray = Array.isArray;
+var keys = Object.keys;
 
 /**
  * Check if a given value is an instance of a JSON object.
@@ -69,8 +64,8 @@ function areEqual(item1, item2) {
     // edge case when one of the items is null
     if (!isObject(item2)) return false;
 
-    keys1 = getKeys(item1);
-    keys2 = getKeys(item2);
+    keys1 = keys(item1);
+    keys2 = keys(item2);
 
     if (keys1.length !== keys2.length) return false;
 
@@ -157,10 +152,10 @@ var validate = function(instance, schema, path) {
   }
 
   if ('object' == type) {
-    if (schema.maxProperties && getKeys(instance).length > schema.maxProperties)
+    if (schema.maxProperties && keys(instance).length > schema.maxProperties)
       addError('The instance must have at most ' + schema.maxProperties + ' members.');
 
-    if (schema.minProperties && getKeys(instance).length < schema.minProperties)
+    if (schema.minProperties && keys(instance).length < schema.minProperties)
       addError('The instance must have at least ' + schema.maxProperties + ' members.');
 
     if (schema.required)
@@ -173,10 +168,10 @@ var validate = function(instance, schema, path) {
       properties = or(schema.properties, {});
       pattern = or(schema.patternProperties, {});
       additional = or(schema.additionalProperties, {});
-      pp = getKeys(pattern);
+      pp = keys(pattern);
     }
 
-    getKeys(instance).forEach(function(key) {
+    keys(instance).forEach(function(key) {
       var schemas, match;
 
       if (schema.dependencies && schema.dependencies[key])

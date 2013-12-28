@@ -172,10 +172,20 @@ var validate = function(instance, schema, path) {
     }
 
     keys(instance).forEach(function(key) {
-      var schemas, match;
+      var schemas, match, dependency;
 
-      if (schema.dependencies && schema.dependencies[key])
-        errors = errors.concat(validate(instance, schema.dependencies[key], path));
+      if (schema.dependencies && (dependency = schema.dependencies[key])) {
+        if (isArray(dependency)) {
+          dependency.forEach(function (prop) {
+            if (!instance.hasOwnProperty(prop)) {
+              addError('Property "' + key + '" requires "' + prop + '" to also be present.');
+            }
+          });
+        }
+        else {
+          errors = errors.concat(validate(instance, dependency, path));
+        }
+      }
 
       if (
         properties &&

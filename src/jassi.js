@@ -281,6 +281,10 @@ var validate = function(instance, schema, path) {
         }
         found = 1;
       }
+
+    if (!found) {
+      addError('The instance must validate against one schema defined by the "oneOf" keyword.');      
+    }
   }
 
   if (schema.not && !validate(instance, schema.not, path).length)

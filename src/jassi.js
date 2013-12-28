@@ -13,10 +13,6 @@ function isArray(value) {
   return Array.isArray(value);
 }
 
-function inArray(value, array) {
-  return array.indexOf(value) != -1;
-}
-
 function getKeys(obj) {
   return Object.keys(obj);
 }

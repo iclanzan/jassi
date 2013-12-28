@@ -109,8 +109,6 @@ var validate = function(instance, schema, path) {
   if (schema.type && schema.type != type && (schema.type != 'integer' || type != 'number' || instance % 1 != 0 ))
     addError('Invalid type. Was expecting ' + schema.type + ' but found ' + type + '.');
 
-  if (null === instance) return errors;
-
   if ('array' == type) {
     l = instance.length;
 

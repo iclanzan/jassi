@@ -47,11 +47,13 @@ function getType(value) {
  * @return {Boolean}       Returns true if the items are equal.
  */
 function areEqual(item1, item2) {
+  var type1 = getType(item1);
+  var type2 = getType(item2);
   var i, l, keys1, keys2, key;
 
-  if (typeof item1 !== typeof item2) return false;
+  if (type1 != type2) return false;
 
-  if (isArray(item1)) {
+  if ('array' == type1) {
     if (item1.length !== item2.length) return false;
 
     for (i = 0, l = item1.length; i < l; i ++)
@@ -60,10 +62,7 @@ function areEqual(item1, item2) {
     return true;
   }
 
-  if (isObject(item1)) {
-    // edge case when one of the items is null
-    if (!isObject(item2)) return false;
-
+  if ('object' == type1) {
     keys1 = keys(item1);
     keys2 = keys(item2);
 

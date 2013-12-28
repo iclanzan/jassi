@@ -107,7 +107,7 @@ var validate = function(instance, schema, path) {
   if (!isObject(schema)) return addError('Invalid schema.');
 
   type = getType(instance);
-  if (schema.type && schema.type != type && (schema.type != 'integer' || type == 'number' && instance % 1 != 0 ))
+  if (schema.type && schema.type != type && (schema.type != 'integer' || type != 'number' || instance % 1 != 0 ))
     addError('Invalid type. Was expecting ' + schema.type + ' but found ' + type + '.');
 
   if (null === instance) return errors;

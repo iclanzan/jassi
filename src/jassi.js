@@ -191,7 +191,7 @@ var validate = function(instance, schema, path) {
           schemas.push(properties[key]);
         if (pp && pp.some(function(regex) { return key.match(regex) && (match = pp[regex]); }))
           schemas.push(match);
-        if (!schema.length && additional)
+        if (!schemas.length && additional)
           schemas.push(additional);
 
         schemas.forEach(function(schema) {

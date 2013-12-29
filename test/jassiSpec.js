@@ -15,7 +15,7 @@ function testcaseHandler(nodeunit) {
 }
 
 
-grunt.file.expand({cwd: 'test'}, 'JSON-Schema-Test-Suite/tests/draft4/**/*.json').forEach(function (filepath) {
+grunt.file.expand({cwd: 'test'}, ['JSON-Schema-Test-Suite/tests/draft4/**/*.json', '!**/{format,zeroTerminatedFloats,definitions,ref,refRemote}.json']).forEach(function (filepath) {
   require(__dirname + '/' + filepath).forEach(function (testcase) {
     exports[testcase.description] = testcaseHandler.bind(testcase);
   });

@@ -1,25 +1,16 @@
 /*
- * Jassi v0.1.0
+ * Jassi v0.1.1
  * https://github.com/iclanzan/jassi
  *
- * Copyright (c) 2012 Sorin Iclanzan <sorin@iclanzan.com>
+ * Copyright (c) 2013 Sorin Iclanzan <sorin@iclanzan.com>
  * License: https://github.com/iclanzan/jassi
  */
 
 (function(root, undefined) {
   'use strict';
 
-function isArray(value) {
-  return Array.isArray(value);
-}
-
-function inArray(value, array) {
-  return array.indexOf(value) != -1;
-}
-
-function getKeys(obj) {
-  return Object.keys(obj);
-}
+var isArray = Array.isArray;
+var keys = Object.keys;
 
 /**
  * Check if a given value is an instance of a JSON object.
@@ -56,11 +47,13 @@ function getType(value) {
  * @return {Boolean}       Returns true if the items are equal.
  */
 function areEqual(item1, item2) {
+  var type1 = getType(item1);
+  var type2 = getType(item2);
   var i, l, keys1, keys2, key;
 
-  if (typeof item1 !== typeof item2) return false;
+  if (type1 != type2) return false;
 
-  if (isArray(item1)) {
+  if ('array' == type1) {
     if (item1.length !== item2.length) return false;
 
     for (i = 0, l = item1.length; i < l; i ++)
@@ -69,12 +62,9 @@ function areEqual(item1, item2) {
     return true;
   }
 
-  if (isObject(item1)) {
-    // edge case when one of the items is null
-    if (!isObject(item2)) return false;
-
-    keys1 = getKeys(item1);
-    keys2 = getKeys(item2);
+  if ('object' == type1) {
+    keys1 = keys(item1);
+    keys2 = keys(item2);
 
     if (keys1.length !== keys2.length) return false;
 
@@ -116,10 +106,12 @@ var validate = function(instance, schema, path) {
   if (!isObject(schema)) return addError('Invalid schema.');
 
   type = getType(instance);
-  if (schema.type && schema.type != type && (schema.type != 'integer' || type == 'number' && instance % 1 != 0 ))
-    addError('Invalid type. Was expecting ' + schema.type + ' but found ' + type + '.');
-
-  if (null === instance) return errors;
+  if (schema.type) {
+    items = isArray(schema.type) ? schema.type : [schema.type];
+    if (!~items.indexOf(type) && (type != 'number' || !~items.indexOf('integer') || instance % 1 != 0)) {
+      addError('Invalid type. Was expecting ' + schema.type + ' but found ' + type + '.');
+    }
+  }
 
   if ('array' == type) {
     l = instance.length;
@@ -161,10 +153,10 @@ var validate = function(instance, schema, path) {
   }
 
   if ('object' == type) {
-    if (schema.maxProperties && getKeys(instance).length > schema.maxProperties)
+    if (schema.maxProperties && keys(instance).length > schema.maxProperties)
       addError('The instance must have at most ' + schema.maxProperties + ' members.');
 
-    if (schema.minProperties && getKeys(instance).length < schema.minProperties)
+    if (schema.minProperties && keys(instance).length < schema.minProperties)
       addError('The instance must have at least ' + schema.maxProperties + ' members.');
 
     if (schema.required)
@@ -177,14 +169,24 @@ var validate = function(instance, schema, path) {
       properties = or(schema.properties, {});
       pattern = or(schema.patternProperties, {});
       additional = or(schema.additionalProperties, {});
-      pp = getKeys(pattern);
+      pp = keys(pattern);
     }
 
-    getKeys(instance).forEach(function(key) {
-      var schemas, match;
+    keys(instance).forEach(function(key) {
+      var schemas, dependency;
 
-      if (schema.dependencies && schema.dependencies[key])
-        errors = errors.concat(validate(instance, schema.dependencies[key], path));
+      if (schema.dependencies && (dependency = schema.dependencies[key])) {
+        if (isArray(dependency)) {
+          dependency.forEach(function (prop) {
+            if (!instance.hasOwnProperty(prop)) {
+              addError('Property "' + key + '" requires "' + prop + '" to also be present.');
+            }
+          });
+        }
+        else {
+          errors = errors.concat(validate(instance, dependency, path));
+        }
+      }
 
       if (
         properties &&
@@ -198,9 +200,14 @@ var validate = function(instance, schema, path) {
         schemas = [];
         if (properties && properties.hasOwnProperty(key))
           schemas.push(properties[key]);
-        if (pp && pp.some(function(regex) { return key.match(regex) && (match = pp[regex]); }))
-          schemas.push(match);
-        if (!schema.length && additional)
+        
+        pp && pp.forEach(function(regex) {
+          if (key.match(regex) && pattern[regex]) {
+            schemas.push(pattern[regex]);
+          }
+        });
+
+        if (!schemas.length && additional)
           schemas.push(additional);
 
         schemas.forEach(function(schema) {
@@ -279,6 +286,10 @@ var validate = function(instance, schema, path) {
         }
         found = 1;
       }
+
+    if (!found) {
+      addError('The instance must validate against one schema defined by the "oneOf" keyword.');      
+    }
   }
 
   if (schema.not && !validate(instance, schema.not, path).length)

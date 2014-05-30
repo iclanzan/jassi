@@ -2,7 +2,7 @@
  * Jassi v0.1.1
  * https://github.com/iclanzan/jassi
  *
- * Copyright (c) 2013 Sorin Iclanzan <sorin@iclanzan.com>
+ * Copyright (c) 2014 Sorin Iclanzan <sorin@iclanzan.com>
  * License: https://github.com/iclanzan/jassi
  */
 

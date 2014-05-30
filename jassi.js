@@ -1,5 +1,5 @@
 /*
- * Jassi v0.1.1
+ * Jassi v0.1.2
  * https://github.com/iclanzan/jassi
  *
  * Copyright (c) 2014 Sorin Iclanzan <sorin@iclanzan.com>

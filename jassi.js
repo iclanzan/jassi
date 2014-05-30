@@ -157,7 +157,7 @@ var validate = function(instance, schema, path) {
       addError('The instance must have at most ' + schema.maxProperties + ' members.');
 
     if (schema.minProperties && keys(instance).length < schema.minProperties)
-      addError('The instance must have at least ' + schema.maxProperties + ' members.');
+      addError('The instance must have at least ' + schema.minProperties + ' members.');
 
     if (schema.required)
       schema.required.forEach(function(requiredProperty) {
